@@ -51,4 +51,13 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(userService.updateStatus(request));
     }
+
+    @PostMapping("/update/title")
+    public ResponseEntity<UpdateTitleResponse> updateTitle(
+            @RequestParam UpdateTitleReq request
+    ) {
+        logger.info("called updateTitle");
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(userService.updateTitle(request));
+    }
 }

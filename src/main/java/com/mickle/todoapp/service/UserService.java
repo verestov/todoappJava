@@ -75,6 +75,7 @@ public class UserService {
 
         var task = tasksRepo.findById(request.task_id())
                 .orElseThrow(() -> new EntityNotFoundException("task not found"));
+
         task.setStatus(request.status());
         tasksRepo.save(task);
 
@@ -84,4 +85,26 @@ public class UserService {
                 task.getStatus()
         );
     }
+
+    // Изменение заголовка задачи
+    public UpdateTitleResponse updateTitle(
+            UpdateTitleReq request
+    ) {
+        if(request == null) {
+            throw new IllegalArgumentException("request is required");
+        }
+
+        var task = tasksRepo.findById(request.task_id())
+                .orElseThrow(() -> new EntityNotFoundException("task not found"));
+
+        task.setTitle(request.title());
+        tasksRepo.save(task);
+
+        return new UpdateTitleResponse(
+                task.getId(),
+                task.getTitle(),
+                task.getDescription()
+        );
+    }
+
 }
