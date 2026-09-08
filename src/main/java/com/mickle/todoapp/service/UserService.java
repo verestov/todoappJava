@@ -107,4 +107,25 @@ public class UserService {
         );
     }
 
+    // Изменение описания задачи
+    public UpdateDescriptionResponse updateDescription(
+            UpdateDescriptionReq request
+    ) {
+        if(request == null) {
+            throw new IllegalArgumentException("request is required");
+        }
+
+        var task = tasksRepo.findById(request.task_id())
+                .orElseThrow(() -> new EntityNotFoundException("task not found"));
+
+        task.setDescription(request.description());
+        tasksRepo.save(task);
+
+        return new UpdateDescriptionResponse(
+                task.getId(),
+                task.getTitle(),
+                task.getDescription()
+        );
+    }
+
 }

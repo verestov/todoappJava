@@ -60,4 +60,14 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(userService.updateTitle(request));
     }
+
+    @PostMapping("/update/description")
+    public ResponseEntity<UpdateDescriptionResponse> updateDescription(
+            @RequestParam UpdateDescriptionReq request
+    ) {
+        logger.info("called updateDescription");
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(userService.updateDescription(request));
+    }
 }
