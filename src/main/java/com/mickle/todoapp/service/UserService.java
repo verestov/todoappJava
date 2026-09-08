@@ -1,9 +1,8 @@
 package com.mickle.todoapp.service;
 
-import com.mickle.todoapp.dto.CreateTaskReq;
-import com.mickle.todoapp.dto.CreateTaskResponse;
-import com.mickle.todoapp.dto.GetAllTasksResponse;
+import com.mickle.todoapp.dto.*;
 import com.mickle.todoapp.entity.TaskEntity;
+import com.mickle.todoapp.enums.TaskStatus;
 import com.mickle.todoapp.repository.TasksRepo;
 import com.mickle.todoapp.repository.UsersRepo;
 import jakarta.persistence.EntityNotFoundException;
@@ -57,11 +56,32 @@ public class UserService {
         );
         newTask.setCreatedAt(LocalDate.now());
         newTask.setUser(user);
+        newTask.setStatus(TaskStatus.NEW);
 
         tasksRepo.save(newTask);
 
         return new CreateTaskResponse(
                 newTask.getTitle()
+        );
+    }
+
+    // Обновление статуса задачи
+    public UpdateStatusResponse updateStatus(
+            UpdateStatusReq request
+    ) {
+        if(request == null) {
+            throw new IllegalArgumentException("request is required");
+        }
+
+        var task = tasksRepo.findById(request.task_id())
+                .orElseThrow(() -> new EntityNotFoundException("task not found"));
+        task.setStatus(request.status());
+        tasksRepo.save(task);
+
+        return new UpdateStatusResponse(
+                task.getId(),
+                task.getTitle(),
+                task.getStatus()
         );
     }
 }

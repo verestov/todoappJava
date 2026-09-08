@@ -1,8 +1,6 @@
 package com.mickle.todoapp.controller;
 
-import com.mickle.todoapp.dto.CreateTaskReq;
-import com.mickle.todoapp.dto.CreateTaskResponse;
-import com.mickle.todoapp.dto.GetAllTasksResponse;
+import com.mickle.todoapp.dto.*;
 import com.mickle.todoapp.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,5 +41,14 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(userService.createTask(request, userId));
+    }
+
+    @PostMapping("/update/status")
+    public ResponseEntity<UpdateStatusResponse> updateStatus(
+            @RequestParam UpdateStatusReq request
+    ) {
+        logger.info("called updateStatus");
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(userService.updateStatus(request));
     }
 }

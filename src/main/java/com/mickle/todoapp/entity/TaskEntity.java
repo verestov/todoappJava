@@ -1,5 +1,6 @@
 package com.mickle.todoapp.entity;
 
+import com.mickle.todoapp.enums.TaskStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -33,7 +34,8 @@ public class TaskEntity {
     private String description;
 
     @Column(name = "status")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private TaskStatus status;
 
     @Column(name = "created_at")
     private LocalDate createdAt;
