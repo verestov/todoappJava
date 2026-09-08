@@ -70,4 +70,14 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(userService.updateDescription(request));
     }
+
+    @DeleteMapping("/delete/task")
+    public ResponseEntity<Void>  deleteTask(
+            @RequestParam DeleteTaskReq request
+    ) {
+        logger.info("called deleteTask");
+        userService.deleteTask(request);
+
+        return ResponseEntity.noContent().build();
+    }
 }

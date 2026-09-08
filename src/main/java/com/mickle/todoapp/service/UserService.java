@@ -128,4 +128,15 @@ public class UserService {
         );
     }
 
+    // Удаление задачи
+    public void deleteTask(
+            DeleteTaskReq request
+    ) {
+        if(request == null) {
+            throw new IllegalArgumentException("request is required");
+        }
+
+        tasksRepo.deleteById(request.task_id());
+    }
+
 }
