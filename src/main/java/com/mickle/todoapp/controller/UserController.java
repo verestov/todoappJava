@@ -34,7 +34,7 @@ public class UserController {
 
     @PostMapping("/new")
     public ResponseEntity<CreateTaskResponse> createTask(
-            @RequestParam(required = false) Long userId,
+            @RequestParam Long userId,
             @RequestBody CreateTaskReq request
     ) {
         logger.info("called createTask");
@@ -45,7 +45,7 @@ public class UserController {
 
     @PostMapping("/update/status")
     public ResponseEntity<UpdateStatusResponse> updateStatus(
-            @RequestParam UpdateStatusReq request
+            @RequestBody UpdateStatusReq request
     ) {
         logger.info("called updateStatus");
         return ResponseEntity.status(HttpStatus.OK)
@@ -54,7 +54,7 @@ public class UserController {
 
     @PostMapping("/update/title")
     public ResponseEntity<UpdateTitleResponse> updateTitle(
-            @RequestParam UpdateTitleReq request
+            @RequestBody UpdateTitleReq request
     ) {
         logger.info("called updateTitle");
         return ResponseEntity.status(HttpStatus.OK)
@@ -63,7 +63,7 @@ public class UserController {
 
     @PostMapping("/update/description")
     public ResponseEntity<UpdateDescriptionResponse> updateDescription(
-            @RequestParam UpdateDescriptionReq request
+            @RequestBody UpdateDescriptionReq request
     ) {
         logger.info("called updateDescription");
 
@@ -73,7 +73,7 @@ public class UserController {
 
     @DeleteMapping("/delete/task")
     public ResponseEntity<Void>  deleteTask(
-            @RequestParam DeleteTaskReq request
+            @RequestBody DeleteTaskReq request
     ) {
         logger.info("called deleteTask");
         userService.deleteTask(request);

@@ -136,7 +136,10 @@ public class UserService {
             throw new IllegalArgumentException("request is required");
         }
 
-        tasksRepo.deleteById(request.task_id());
+        var task = tasksRepo.findById(request.task_id())
+                .orElseThrow(() -> new EntityNotFoundException("task not found"));
+
+        tasksRepo.delete(task);
     }
 
 }
