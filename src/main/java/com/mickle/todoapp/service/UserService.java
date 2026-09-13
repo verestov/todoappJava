@@ -2,10 +2,13 @@ package com.mickle.todoapp.service;
 
 import com.mickle.todoapp.dto.*;
 import com.mickle.todoapp.entity.TaskEntity;
+import com.mickle.todoapp.entity.UserEntity;
 import com.mickle.todoapp.enums.TaskStatus;
 import com.mickle.todoapp.repository.TasksRepo;
 import com.mickle.todoapp.repository.UsersRepo;
 import jakarta.persistence.EntityNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
@@ -15,6 +18,7 @@ import java.util.List;
 public class UserService {
     private final TasksRepo tasksRepo;
     private final UsersRepo usersRepo;
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
     public UserService(TasksRepo tasksRepo,  UsersRepo usersRepo) {
@@ -22,17 +26,38 @@ public class UserService {
         this.usersRepo = usersRepo;
     }
 
+    // Создание нового пользователя
+    public CreateUserResponse createUser(
+            CreateUserReq request
+    ) {
+        var newUser = new UserEntity(
+                request.username()
+        );
+
+        usersRepo.save(newUser);
+
+        return new CreateUserResponse(
+                newUser.getId(),
+                newUser.getUsername()
+        );
+    }
+
     // Получения списка всех задач пользователя
     public List<GetAllTasksResponse> getAllTasks(
             Long userId
     ) {
-        List<TaskEntity> list = tasksRepo.findAllByUserId(userId);
+        logger.info("Searching tasks for userId = {}", userId);
+
+        List<TaskEntity> list = tasksRepo.findTasksByUserId(userId);
+
+        logger.info("Found {} tasks", list.size());
 
         return list.stream()
                 .map(task -> new GetAllTasksResponse(
                         task.getId(),
                         task.getTitle(),
                         task.getDescription(),
+                        task.getStatus(),
                         task.getCreatedAt()
                 ))
                 .toList();
@@ -40,14 +65,13 @@ public class UserService {
 
     // Создание новой задачи
     public CreateTaskResponse createTask(
-            CreateTaskReq request,
-            Long userId
+            CreateTaskReq request
     ) {
-        if(userId == null) {
+        if(request.user_id() == null) {
             throw new IllegalArgumentException("userId is required");
         }
 
-        var user = usersRepo.findById(userId)
+        var user = usersRepo.findById(request.user_id())
                 .orElseThrow(() -> new EntityNotFoundException("userId not found"));
 
         var newTask = new TaskEntity(

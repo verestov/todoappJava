@@ -25,4 +25,8 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user")
     private List<TaskEntity> tasks;
+
+    public UserEntity(String username) {
+        this.username = username;
+    }
 }

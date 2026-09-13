@@ -2,6 +2,7 @@ package com.mickle.todoapp.controller;
 
 import com.mickle.todoapp.dto.*;
 import com.mickle.todoapp.service.UserService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +23,19 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/")
+    @PostMapping("/create_user")
+    public ResponseEntity<CreateUserResponse> createUser(
+            @Valid @RequestBody CreateUserReq createUserReq
+    ) {
+        logger.info("called createUser");
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(userService.createUser(createUserReq));
+    }
+
+    @GetMapping("/tasks/{userId}")
     public ResponseEntity<List<GetAllTasksResponse>> getAllTasks(
-            @RequestParam(required = false) Long userId
+            @PathVariable Long userId
     ) {
         logger.info("called getAllTasks");
 
@@ -34,16 +45,15 @@ public class UserController {
 
     @PostMapping("/new")
     public ResponseEntity<CreateTaskResponse> createTask(
-            @RequestParam Long userId,
             @RequestBody CreateTaskReq request
     ) {
         logger.info("called createTask");
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(userService.createTask(request, userId));
+                .body(userService.createTask(request));
     }
 
-    @PostMapping("/update/status")
+    @PostMapping("/update_status")
     public ResponseEntity<UpdateStatusResponse> updateStatus(
             @RequestBody UpdateStatusReq request
     ) {
