@@ -7,12 +7,14 @@ import com.mickle.todoapp.enums.TaskStatus;
 import com.mickle.todoapp.repository.TasksRepo;
 import com.mickle.todoapp.repository.UsersRepo;
 import jakarta.persistence.EntityNotFoundException;
+import org.apache.coyote.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class UserService {
@@ -61,6 +63,30 @@ public class UserService {
                         task.getCreatedAt()
                 ))
                 .toList();
+    }
+
+    public GetTaskByIdResponse getTaskById(
+            GetTaskByIdReq request
+    ) throws BadRequestException {
+        if(request.user_id() == null) {
+            throw new BadRequestException("user_id is required");
+        }
+        if(request.task_id() == null) {
+            throw new BadRequestException("task_id is required");
+        }
+        var task = tasksRepo.findById(request.task_id())
+                .orElseThrow(() -> new EntityNotFoundException("task not found"));
+
+        if(!Objects.equals(task.getUser().getId(), request.user_id())) {
+            throw new BadRequestException("user_id (req) and user_id (taskRepo) are incompatible");
+        }
+
+        return new GetTaskByIdResponse(
+                task.getId(),
+                task.getTitle(),
+                task.getDescription(),
+                task.getStatus()
+        );
     }
 
     // Создание новой задачи

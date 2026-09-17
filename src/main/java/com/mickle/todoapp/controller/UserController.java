@@ -3,6 +3,7 @@ package com.mickle.todoapp.controller;
 import com.mickle.todoapp.dto.*;
 import com.mickle.todoapp.service.UserService;
 import jakarta.validation.Valid;
+import org.apache.coyote.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,16 @@ public class UserController {
                 .body(userService.getAllTasks(userId));
     }
 
+    @GetMapping("/task")
+    public ResponseEntity<GetTaskByIdResponse> getTaskById(
+            @RequestBody GetTaskByIdReq request
+    ) throws BadRequestException {
+        logger.info("called getTaskById");
+
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .body(userService.getTaskById(request));
+    }
+
     @PostMapping("/new")
     public ResponseEntity<CreateTaskResponse> createTask(
             @RequestBody CreateTaskReq request
@@ -53,7 +64,7 @@ public class UserController {
                 .body(userService.createTask(request));
     }
 
-    @PostMapping("/update_status")
+    @PostMapping("/update/status")
     public ResponseEntity<UpdateStatusResponse> updateStatus(
             @RequestBody UpdateStatusReq request
     ) {
